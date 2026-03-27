@@ -157,6 +157,25 @@
     font-size:12px;color:var(--gray);}
   .contact-footer a{color:var(--gold);text-decoration:none;}
   .req{color:var(--red);}
+  .payment-block{background:linear-gradient(135deg,rgba(26,163,137,.08),rgba(26,163,137,.02));
+    border:1.5px solid rgba(26,163,137,.3);border-radius:14px;padding:16px;margin-bottom:16px;}
+  .pay-methods{display:flex;flex-direction:column;gap:6px;margin:10px 0;}
+  .pay-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+    border-radius:10px;padding:9px 14px;cursor:pointer;transition:all .2s;
+    display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .pay-item:hover{border-color:var(--gold);background:rgba(244,162,97,.06);}
+  .pay-item-left{display:flex;align-items:center;gap:10px;}
+  .pay-name{font-size:12px;font-weight:700;color:var(--teal);
+    text-transform:uppercase;letter-spacing:.5px;min-width:62px;}
+  .pay-info{font-size:13px;color:var(--white);font-weight:500;}
+  .pay-copy-btn{font-size:11px;color:var(--gold);white-space:nowrap;opacity:.7;}
+  .upload-area{border:2px dashed rgba(244,162,97,.35);border-radius:10px;
+    padding:14px;text-align:center;cursor:pointer;transition:all .2s;margin-top:10px;
+    background:rgba(244,162,97,.02);display:flex;align-items:center;justify-content:center;gap:10px;}
+  .upload-area:hover{border-color:var(--gold);background:rgba(244,162,97,.06);}
+  .upload-area input{display:none;}
+  .upload-preview{max-width:100%;max-height:160px;border-radius:8px;
+    margin-top:8px;border:2px solid var(--gold);display:block;}
   @media(max-width:560px){
     .form-grid.two{grid-template-columns:1fr;}
     .avantaj-grid{grid-template-columns:1fr;}
@@ -311,6 +330,50 @@
       </div>
     </div>
 
+    <!-- PÈMAN -->
+    <div class="payment-block">
+      <div class="section-label" style="margin-bottom:4px;">💳 <span id="t-sec-pay">Pèman Frè Enskripsyon</span></div>
+      <div style="font-size:13px;color:var(--gray);margin-bottom:4px;" id="t-pay-instruction">Voye pèman ou nan youn nan metòd sa yo, epi voye screenshot + ID tranzaksyon an anba.</div>
+
+      <div class="pay-methods">
+        <div class="pay-item" onclick="copyPay(this)">
+          <div class="pay-item-left"><span class="pay-name">💚 Wise</span><span class="pay-info">Janviermarcduverson@gmail.com</span></div>
+          <span class="pay-copy-btn">📋 Kopye</span>
+        </div>
+        <div class="pay-item" onclick="copyPay(this)">
+          <div class="pay-item-left"><span class="pay-name">🔵 PayPal</span><span class="pay-info">Traderson509@gmail.com</span></div>
+          <span class="pay-copy-btn">📋 Kopye</span>
+        </div>
+        <div class="pay-item" onclick="copyPay(this)">
+          <div class="pay-item-left"><span class="pay-name">🟡 MonCash</span><span class="pay-info">+509 3148-1814</span></div>
+          <span class="pay-copy-btn">📋 Kopye</span>
+        </div>
+        <div class="pay-item" onclick="copyPay(this)">
+          <div class="pay-item-left"><span class="pay-name">🟠 NatCash</span><span class="pay-info">+509 3524-5951</span></div>
+          <span class="pay-copy-btn">📋 Kopye</span>
+        </div>
+        <div class="pay-item" onclick="copyPay(this)">
+          <div class="pay-item-left"><span class="pay-name">🟡 Binance</span><span class="pay-info">Janviermarcduverson@gmail.com</span></div>
+          <span class="pay-copy-btn">📋 Kopye</span>
+        </div>
+      </div>
+      <div id="copyToast" style="display:none;font-size:12px;color:var(--teal);margin-bottom:6px;text-align:center;font-weight:700;">✅ Kopye!</div>
+
+      <div class="form-group" style="margin-top:10px;">
+        <label id="t-lbl-payid">ID / Nimewo Tranzaksyon <span class="req">*</span></label>
+        <input type="text" id="paymentId" placeholder="Egzanp: TXN123456789" autocomplete="off">
+      </div>
+
+      <div class="upload-area" id="uploadArea" onclick="document.getElementById('screenshotInput').click()">
+        <input type="file" id="screenshotInput" accept="image/*" onchange="previewScreenshot(this)">
+        <div id="uploadText" style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:22px;">📸</span>
+          <span style="font-size:13px;color:var(--gray);" id="t-upload-text">Klike pou upload Screenshot Pèman ou a</span>
+        </div>
+        <img id="screenshotPreview" class="upload-preview" style="display:none;">
+      </div>
+    </div>
+
     <!-- PROMO CODE -->
     <div class="promo-block">
       <div class="section-label" style="margin-bottom:8px;">🎟️ <span id="t-sec-promo">Kòd Promo</span></div>
@@ -365,12 +428,17 @@
   </div>
 
   <div class="contact-footer">
-    <strong>Traderson509</strong> &nbsp;|&nbsp;
-    <a href="https://wa.me/50935245951" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#25D366;color:#fff;padding:5px 14px;border-radius:20px;font-weight:700;text-decoration:none;font-size:13px;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      WhatsApp
-    </a> &nbsp;|&nbsp;
-    <a href="mailto:traderson509@gmail.com">traderson509@gmail.com</a><br>
+    <strong>Traderson509</strong><br style="margin-bottom:8px;">
+    <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:8px;">
+      <a href="https://wa.me/50935245951" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#25D366;color:#fff;padding:6px 16px;border-radius:20px;font-weight:700;text-decoration:none;font-size:13px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp
+      </a>
+      <a href="mailto:traderson509@gmail.com" style="display:inline-flex;align-items:center;gap:6px;background:#EA4335;color:#fff;padding:6px 16px;border-radius:20px;font-weight:700;text-decoration:none;font-size:13px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        Email
+      </a>
+    </div><br>
     <span style="color:rgba(255,255,255,.3);font-size:11px">FamilyTrading Real © 2026</span>
   </div>
 </div>
@@ -420,6 +488,10 @@ var T = {
     "t-agree1":"Mwen dakò pou peye $300 anvan premye sesyon an epi mwen konprann fòmasyon an se 100% anliy.",
     "t-agree2":"Mwen dakò resevwa redifizyon sesyon yo nan Gwoup Telegram FamilyTrading epi mwen konprann live yo anrejistre otomatikman.",
     "t-agree3":"Mwen konfime enfòmasyon mwen yo kòrèk epi mwen angaje pou respekte règ klas la.",
+    "t-sec-pay":"Pèman Frè Enskripsyon",
+    "t-pay-instruction":"Voye pèman ou nan youn nan metòd sa yo, epi voye screenshot + ID tranzaksyon an anba.",
+    "t-lbl-payid":"ID / Nimewo Tranzaksyon",
+    "t-upload-text":"Klike pou upload Screenshot Pèman ou a",
     "t-btn-submit":"SOUMÈT & EKSPÒTE PDF","t-success-title":"ENSKRIPSYON KONPLÈT!",
     "t-btn-dl":"Telechaje PDF","btnNew":"Nouvo Fòmilè",
     alert_required:"Tanpri ranpli tout chan obligatwa yo (*)",
@@ -467,6 +539,10 @@ var T = {
     "t-agree1":"J'accepte de payer $300 avant la première session et je comprends que la formation est 100% en ligne.",
     "t-agree2":"J'accepte de recevoir les rediffusions dans le Groupe Telegram FamilyTrading et je comprends que les lives sont enregistrés automatiquement.",
     "t-agree3":"Je confirme que mes informations sont correctes et je m'engage à respecter les règles de classe.",
+    "t-sec-pay":"Paiement des Frais d'Inscription",
+    "t-pay-instruction":"Envoyez votre paiement via l'une de ces méthodes, puis uploadez le screenshot + l'ID de transaction ci-dessous.",
+    "t-lbl-payid":"ID / Numéro de Transaction",
+    "t-upload-text":"Cliquez pour uploader le Screenshot de votre Paiement",
     "t-btn-submit":"SOUMETTRE & EXPORTER PDF","t-success-title":"INSCRIPTION COMPLÈTE!",
     "t-btn-dl":"Télécharger PDF","btnNew":"Nouveau Formulaire",
     alert_required:"Veuillez remplir tous les champs obligatoires (*)",
@@ -514,6 +590,10 @@ var T = {
     "t-agree1":"I agree to pay $300 before the first session and understand the training is 100% online.",
     "t-agree2":"I agree to receive session replays in the FamilyTrading Telegram Group and understand lives are automatically recorded.",
     "t-agree3":"I confirm my information is correct and I commit to respecting the class rules.",
+    "t-sec-pay":"Registration Fee Payment",
+    "t-pay-instruction":"Send your payment via one of these methods, then upload the screenshot + transaction ID below.",
+    "t-lbl-payid":"Transaction ID / Number",
+    "t-upload-text":"Click to upload your Payment Screenshot",
     "t-btn-submit":"SUBMIT & EXPORT PDF","t-success-title":"REGISTRATION COMPLETE!",
     "t-btn-dl":"Download PDF","btnNew":"New Form",
     alert_required:"Please fill all required fields (*)",
@@ -539,6 +619,41 @@ var drawing = false;
     });
   }
 })();
+
+// ═══════════════════════════════════════
+// PAYMENT COPY + SCREENSHOT
+// ═══════════════════════════════════════
+function copyPay(el) {
+  var info = el.querySelector('.pay-info').textContent.trim();
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(info);
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = info; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+  }
+  var toast = document.getElementById('copyToast');
+  toast.style.display = 'block';
+  setTimeout(function(){ toast.style.display = 'none'; }, 2000);
+}
+
+var screenshotData = '';
+function previewScreenshot(input) {
+  if (!input.files || !input.files[0]) return;
+  var file = input.files[0];
+  if (file.size > 5 * 1024 * 1024) {
+    alert('Fichye a twò gwo — maksimòm 5MB'); return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    screenshotData = e.target.result;
+    var preview = document.getElementById('screenshotPreview');
+    preview.src = screenshotData;
+    preview.style.display = 'block';
+    document.getElementById('uploadText').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
 
 // ═══════════════════════════════════════
 // LANG SWITCHER
@@ -647,6 +762,13 @@ document.getElementById('btnSubmit').addEventListener('click', function(){
       !document.getElementById('agree2').checked ||
       !document.getElementById('agree3').checked) { alert(t.alert_agree); return; }
   if (!hasSignature) { alert(t.alert_sign); return; }
+  var payId = document.getElementById('paymentId').value.trim();
+  if (!payId) {
+    alert(currentLang==='kr' ? 'Tanpri mete ID / Nimewo Tranzaksyon pèman ou a' :
+          currentLang==='fr' ? 'Veuillez entrer l\'ID de votre transaction de paiement' :
+          'Please enter your payment transaction ID');
+    return;
+  }
 
   formData = {
     prenom:prenom, nom:nom, email:email, tel:tel,
@@ -656,6 +778,8 @@ document.getElementById('btnSubmit').addEventListener('click', function(){
     mache:  (document.querySelector('input[name="mache"]:checked') || {}).value || '-',
     objectif: document.getElementById('objectif').value || '-',
     reference: document.getElementById('reference').value || '-',
+    paymentId: document.getElementById('paymentId').value.trim() || '-',
+    screenshot: screenshotData ? 'Voye' : 'Pa voye',
     promo: promoApplied ? VALID_PROMO : '',
     prix_final: promoApplied ? '$200' : '$300',
     signature: canvas.toDataURL('image/png'),
@@ -714,6 +838,8 @@ function sendEmailNotification(data, t) {
     mache:       typeof macheMap[data.mache] === 'object' ? macheMap[data.mache][data.lang] : (macheMap[data.mache] || data.mache),
     objectif:    data.objectif,
     reference:   data.reference,
+    payment_id:  data.paymentId || '-',
+    screenshot:  data.screenshot || 'Pa voye',
     promo:       data.promo ? data.promo + ' (-$100 / -33.33%)' : 'Okenn',
     prix_final:  data.prix_final,
     date:        data.date,
@@ -814,6 +940,10 @@ document.getElementById('btnDownload').addEventListener('click', function(){
   fieldRow(t['t-lbl-email'], formData.email, t['t-lbl-tel'], formData.tel);
   fieldRow(t['t-lbl-pays'], formData.pays, t['t-lbl-age'], formData.age);
 
+  // Payment section in PDF
+  sectionBar('💳 ' + (t['t-sec-pay'] || 'Pèman'));
+  fieldRow('ID Tranzaksyon', formData.paymentId, 'Screenshot', formData.screenshot);
+  
   sectionBar('📊 ' + t['t-sec-trading']);
   var niveauMap = {debutant:t['t-niv1'], intermediaire:t['t-niv2'], avance:t['t-niv3']};
   var macheMap  = {forex:'Forex', crypto:'Crypto', indices:'Indices', tout:t['t-mache-tout']};
@@ -878,6 +1008,11 @@ document.getElementById('btnNew').addEventListener('click', function(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   hasSignature=false;
   promoApplied=false;
+  document.getElementById('paymentId').value='';
+  document.getElementById('screenshotInput').value='';
+  document.getElementById('screenshotPreview').style.display='none';
+  document.getElementById('uploadText').style.display='block';
+  screenshotData='';
   document.getElementById('promoCode').value='';
   document.getElementById('promoSuccess').style.display='none';
   document.getElementById('promoError').style.display='none';
